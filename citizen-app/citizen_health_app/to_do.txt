@@ -1,0 +1,43 @@
+1. On dashboard screen, 
+i. the dengue alert banner is not fetching info
+from database.
+
+ii. the Find hospitals is continuously loading 
+
+iii. telemedicine should show real doctors stored in database.
+
+iv. on clicking emergency help, then on clicking medical 
+emergency, accideent, fire emergency it shows near emergency notified
+and two buttons : call ambulance, get directions are given in all three 
+emergency cases. i want them to serve their purpose properly not 
+just a screen. when i click on call ambulance, the numpad of 
+phone (calling) should open. when i click on get directions the google
+map should open and nearest fire emergency should be shown on map
+
+v. on clicking emrgency floating button the screen just keeps on loading.
+i want it to be resolved.
+
+vi. in the community updates, i want the real notifications to be fetched 
+ db which are useful for community but currently its hardcoded.
+
+
+##############################
+2. SERVICES TAB
+
+i. Book Appointment.
+Here consult specific doctor option is given in which after clicking it 
+some doctor's list appears. but who are they? are they from nearby
+hospitals or just randomly places. should be put a list of doctors from
+nearby location to user? 
+also the consult department section should fetch departments from database.
+On clicking general consultation the appointment gets confirmed, but 
+where? i didn't selected the hospital there must be asked where, and all that...
+and there also be a confirm appointment option so user could check if
+the info he shared and the place of appiontment and all other info 
+is corect or not, bcaouse currently the appointment directly get confirmed.
+
+ii. Telemedicine:
+On clicking it list of departments appear. every department has same
+list of doctors. i want them to be appear according to their real dept.
+this can be fetched from database in which doctors are assigned according
+to their departments and on clicking consult directly the screen appears

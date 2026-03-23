@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Modern Theme Toggle</title>
+    <style>
+      :root {
+        --bg: #f4f7fb;
+        --surface: rgba(255, 255, 255, 0.72);
+        --text: #172033;
+        --muted: #5f6f8f;
+        --track: linear-gradient(180deg, #ffffff, #e8edf6);
+        --track-border: rgba(164, 179, 205, 0.55);
+        --knob: #ffffff;
+        --knob-icon: #f4b400;
+        --shadow-soft: 0 20px 40px -24px rgba(22, 34, 62, 0.35);
+        --shadow-inset: inset 0 1px 0 rgba(255, 255, 255, 0.9);
+      }
+
+      body.dark {
+        --bg: #12151d;
+        --surface: rgba(22, 27, 37, 0.72);
+        --text: #eef2ff;
+        --muted: #a2aec8;
+        --track: linear-gradient(180deg, #2a313f, #1b212d);
+        --track-border: rgba(101, 115, 145, 0.45);
+        --knob: #1f2430;
+        --knob-icon: #ffffff;
+        --shadow-soft: 0 20px 40px -24px rgba(0, 0, 0, 0.65);
+        --shadow-inset: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        min-height: 100%;
+        margin: 0;
+        font-family: "Segoe UI", system-ui, sans-serif;
+      }
+
+      body {
+        background:
+          radial-gradient(circle at top left, rgba(119, 164, 255, 0.18), transparent 32%),
+          radial-gradient(circle at bottom right, rgba(84, 208, 194, 0.12), transparent 28%),
+          var(--bg);
+        color: var(--text);
+        transition:
+          background 0.45s ease,
+          color 0.35s ease;
+      }
+
+      .page {
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        padding: 24px;
+      }
+
+      .card {
+        width: min(100%, 560px);
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        background: var(--surface);
+        backdrop-filter: blur(18px);
+        border-radius: 28px;
+        padding: 32px 28px;
+        box-shadow: var(--shadow-soft);
+        transition:
+          background 0.35s ease,
+          border-color 0.35s ease,
+          box-shadow 0.35s ease;
+      }
+
+      .eyebrow {
+        margin: 0 0 10px;
+        font-size: 0.8rem;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+
+      h1 {
+        margin: 0;
+        font-size: clamp(2rem, 4vw, 3rem);
+        line-height: 1;
+      }
+
+      p {
+        margin: 14px 0 0;
+        color: var(--muted);
+        line-height: 1.6;
+      }
+
+      .toggle-row {
+        margin-top: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 18px;
+        flex-wrap: wrap;
+      }
+
+      .mode-label {
+        font-size: 0.95rem;
+        color: var(--muted);
+      }
+
+      .theme-toggle {
+        position: relative;
+        width: 124px;
+        height: 68px;
+        border: 1px solid var(--track-border);
+        border-radius: 999px;
+        background: var(--track);
+        box-shadow:
+          var(--shadow-inset),
+          0 12px 28px -18px rgba(16, 24, 40, 0.45);
+        cursor: pointer;
+        padding: 0;
+        appearance: none;
+        -webkit-tap-highlight-color: transparent;
+        transition:
+          background 0.35s ease,
+          border-color 0.35s ease,
+          transform 0.2s ease;
+      }
+
+      .theme-toggle:hover {
+        transform: translateY(-1px);
+      }
+
+      .theme-toggle:active {
+        transform: translateY(0);
+      }
+
+      .theme-toggle:focus-visible {
+        outline: 3px solid rgba(76, 132, 255, 0.35);
+        outline-offset: 4px;
+      }
+
+      .toggle-icon {
+        position: absolute;
+        top: 50%;
+        width: 22px;
+        height: 22px;
+        transform: translateY(-50%);
+        opacity: 0.48;
+        transition:
+          opacity 0.3s ease,
+          transform 0.35s ease;
+      }
+
+      .toggle-icon.sun {
+        left: 16px;
+        color: #f6b61f;
+      }
+
+      .toggle-icon.moon {
+        right: 16px;
+        color: #d8def0;
+      }
+
+      .theme-toggle[data-theme="light"] .toggle-icon.sun,
+      .theme-toggle[data-theme="dark"] .toggle-icon.moon {
+        opacity: 0.95;
+        transform: translateY(-50%) scale(1.02);
+      }
+
+      .toggle-knob {
+        position: absolute;
+        top: 7px;
+        left: 7px;
+        width: 52px;
+        height: 52px;
+        border-radius: 50%;
+        background: var(--knob);
+        color: var(--knob-icon);
+        display: grid;
+        place-items: center;
+        box-shadow:
+          0 10px 24px -14px rgba(15, 23, 42, 0.45),
+          inset 0 1px 0 rgba(255, 255, 255, 0.45);
+        transform: translateX(0);
+        transition:
+          transform 0.38s cubic-bezier(0.34, 1.56, 0.64, 1),
+          background 0.35s ease,
+          color 0.35s ease,
+          box-shadow 0.35s ease;
+      }
+
+      .theme-toggle[data-theme="dark"] .toggle-knob {
+        transform: translateX(56px);
+      }
+
+      .toggle-knob svg,
+      .toggle-icon svg {
+        width: 100%;
+        height: 100%;
+      }
+
+      @media (max-width: 540px) {
+        .card {
+          padding: 26px 20px;
+          border-radius: 22px;
+        }
+
+        .toggle-row {
+          align-items: flex-start;
+        }
+
+        .theme-toggle {
+          width: 112px;
+          height: 62px;
+        }
+
+        .toggle-knob {
+          width: 48px;
+          height: 48px;
+          top: 6px;
+          left: 6px;
+        }
+
+        .theme-toggle[data-theme="dark"] .toggle-knob {
+          transform: translateX(50px);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="page">
+      <section class="card">
+        <p class="eyebrow">Theme Switch</p>
+        <h1>Modern Light/Dark Toggle</h1>
+        <p>
+          Click the switch to change the full page theme. Preference is stored in
+          <code>localStorage</code>, and the default mode follows system settings when no saved
+          choice exists.
+        </p>
+
+        <div class="toggle-row">
+          <div>
+            <strong id="themeText">Light mode</strong>
+            <div class="mode-label">Persistent, responsive, and system-aware</div>
+          </div>
+
+          <button
+            id="themeToggle"
+            class="theme-toggle"
+            type="button"
+            aria-label="Toggle color theme"
+            aria-pressed="false"
+            data-theme="light"
+          >
+            <span class="toggle-icon sun" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                <circle cx="12" cy="12" r="4.2"></circle>
+                <path d="M12 1.8v3.2M12 19v3.2M4.6 4.6l2.2 2.2M17.2 17.2l2.2 2.2M1.8 12H5M19 12h3.2M4.6 19.4l2.2-2.2M17.2 6.8l2.2-2.2"></path>
+              </svg>
+            </span>
+
+            <span class="toggle-icon moon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M20.2 14.1A8.4 8.4 0 0 1 9.9 3.8a.8.8 0 0 0-1-.96A10 10 0 1 0 21.16 15a.8.8 0 0 0-.96-1Z"></path>
+              </svg>
+            </span>
+
+            <span class="toggle-knob" aria-hidden="true">
+              <svg id="knobSun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                <circle cx="12" cy="12" r="4.2"></circle>
+                <path d="M12 1.8v3.2M12 19v3.2M4.6 4.6l2.2 2.2M17.2 17.2l2.2 2.2M1.8 12H5M19 12h3.2M4.6 19.4l2.2-2.2M17.2 6.8l2.2-2.2"></path>
+              </svg>
+            </span>
+          </button>
+        </div>
+      </section>
+    </main>
+
+    <script>
+      const STORAGE_KEY = "preferred-theme";
+      const body = document.body;
+      const themeToggle = document.getElementById("themeToggle");
+      const themeText = document.getElementById("themeText");
+
+      const moonSvg = `
+        <svg viewBox="0 0 24 24" fill="currentColor">
+          <path d="M20.2 14.1A8.4 8.4 0 0 1 9.9 3.8a.8.8 0 0 0-1-.96A10 10 0 1 0 21.16 15a.8.8 0 0 0-.96-1Z"></path>
+        </svg>
+      `;
+
+      const sunSvg = `
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <circle cx="12" cy="12" r="4.2"></circle>
+          <path d="M12 1.8v3.2M12 19v3.2M4.6 4.6l2.2 2.2M17.2 17.2l2.2 2.2M1.8 12H5M19 12h3.2M4.6 19.4l2.2-2.2M17.2 6.8l2.2-2.2"></path>
+        </svg>
+      `;
+
+      function getSystemTheme() {
+        return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+      }
+
+      function getInitialTheme() {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        return saved === "light" || saved === "dark" ? saved : getSystemTheme();
+      }
+
+      function applyTheme(theme) {
+        body.classList.toggle("dark", theme === "dark");
+        themeToggle.dataset.theme = theme;
+        themeToggle.setAttribute("aria-pressed", String(theme === "dark"));
+        themeText.textContent = theme === "dark" ? "Dark mode" : "Light mode";
+        themeToggle.querySelector(".toggle-knob").innerHTML = theme === "dark" ? moonSvg : sunSvg;
+      }
+
+      let currentTheme = getInitialTheme();
+      applyTheme(currentTheme);
+
+      themeToggle.addEventListener("click", () => {
+        currentTheme = currentTheme === "dark" ? "light" : "dark";
+        localStorage.setItem(STORAGE_KEY, currentTheme);
+        applyTheme(currentTheme);
+      });
+
+      const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+      mediaQuery.addEventListener("change", (event) => {
+        if (localStorage.getItem(STORAGE_KEY)) {
+          return;
+        }
+
+        currentTheme = event.matches ? "dark" : "light";
+        applyTheme(currentTheme);
+      });
+    </script>
+  </body>
+</html>
